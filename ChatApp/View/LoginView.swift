@@ -5,6 +5,7 @@ protocol LoginViewDelegate: AnyObject {
     func loginButtonError(_ view: LoginView)
 }
 
+// MARK: - Proporties, init() and layoutSubviews()
 final class LoginView: UIView {
     weak var delegate: LoginViewDelegate?
     
@@ -16,7 +17,8 @@ final class LoginView: UIView {
     
     private let imageView: UIImageView = {
         let image = UIImageView()
-        image.backgroundColor = .darkGray
+        image.image = UIImage(named: "icon")
+        image.layer.masksToBounds = true
         image.contentMode = .scaleAspectFit
         return image
     }()
@@ -62,6 +64,7 @@ final class LoginView: UIView {
     }
 }
 
+// MARK: - setupView  and Contraints
 private extension LoginView {
     func setupView() {
         backgroundColor = .white
@@ -85,6 +88,7 @@ private extension LoginView {
             width: imageSize,
             height: imageSize
         )
+        imageView.layer.cornerRadius = imageView.width / 2
         
         emailField.frame = CGRect(
             x: 30,
@@ -107,6 +111,7 @@ private extension LoginView {
     }
 }
 
+// MARK: - didTapLogin()
 private extension LoginView {
     @objc func didTapLogin() {
         if let email = emailField.text,
@@ -123,7 +128,7 @@ private extension LoginView {
     }
 }
 
-
+// MARK: - add functionality to textField
 extension LoginView {
     var emailTextField: UITextField { emailField }
     var passwordTextField: UITextField { passwordField }

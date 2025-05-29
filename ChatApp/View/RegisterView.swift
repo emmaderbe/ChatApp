@@ -6,6 +6,7 @@ protocol RegisterViewDelegate: AnyObject {
     func imageTapped(_ view: RegisterView)
 }
 
+// MARK: - Proporties, init() and layoutSubviews()
 final class RegisterView: UIView {
     weak var delegate: RegisterViewDelegate?
     
@@ -19,7 +20,7 @@ final class RegisterView: UIView {
     private let imageView: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(systemName: "person")
-        image.tintColor = .systemGray
+        image.tintColor = .systemGray5
         image.layer.masksToBounds = true
         image.layer.borderWidth = 2
         image.layer.borderColor = UIColor.lightGray.cgColor
@@ -76,6 +77,7 @@ final class RegisterView: UIView {
     }
 }
 
+// MARK: - setupView, addGesture  and Contraints
 private extension RegisterView {
     func setupView() {
         backgroundColor = .white
@@ -83,7 +85,7 @@ private extension RegisterView {
         addSubview(scrollView)
         [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach { scrollView.addSubview($0)}
         
-        registerBttn.addTarget(self, action: #selector(didTapLogin), for: .touchUpInside)
+        registerBttn.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
         addGestureToImage()
     }
     
@@ -106,6 +108,7 @@ private extension RegisterView {
             height: imageSize
         )
         imageView.layer.cornerRadius = imageView.width / 2
+        
         firstNameField.frame = CGRect(
             x: 30,
             y: imageView.frame.maxY + 40,
@@ -139,8 +142,9 @@ private extension RegisterView {
     }
 }
 
+// MARK: - didTapLogin() and didTapChangeProfilePic()
 private extension RegisterView {
-    @objc func didTapLogin() {
+    @objc func didTapRegister() {
         if let firstName = firstNameField.text,
            let lastName = lastNameField.text,
            let email = emailField.text,
@@ -163,7 +167,7 @@ private extension RegisterView {
     }
 }
 
-
+// MARK: - add functionality to textField
 extension RegisterView {
     var emailTextField: UITextField { emailField }
     var passwordTextField: UITextField { passwordField }
@@ -190,13 +194,14 @@ extension RegisterView {
     }
     
     func triggerLoginIfNeeded() {
-        didTapLogin()
+        didTapRegister()
     }
-    
-    var scroll: UIScrollView {scrollView}
 }
 
+// MARK: - scroll and setupImage
 extension RegisterView {
+    var scroll: UIScrollView {scrollView}
+    
     func setupImage(with image: UIImage) {
         imageView.image = image
     }

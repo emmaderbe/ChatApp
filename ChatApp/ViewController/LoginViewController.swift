@@ -1,5 +1,6 @@
 import UIKit
 
+// MARK: - Proporties and viewDidLoad()
 final class LoginViewController: UIViewController {
 
     private let loginView = LoginView()
@@ -15,6 +16,7 @@ final class LoginViewController: UIViewController {
     }
 }
 
+// MARK: - setupView and Delegates
 private extension LoginViewController {
     func setupView() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
@@ -31,6 +33,7 @@ private extension LoginViewController {
     }
 }
 
+// MARK: - func didTapRegister()
 private extension LoginViewController {
     @objc func didTapRegister() {
         let vc = RegisterViewController()
@@ -39,6 +42,7 @@ private extension LoginViewController {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == loginView.emailTextField {
@@ -50,7 +54,7 @@ extension LoginViewController: UITextFieldDelegate {
     }
 }
 
-
+// MARK: - LoginViewDelegate
 extension LoginViewController: LoginViewDelegate {
     func loginButtonError(_ view: LoginView) {
         alertUserLoginError()
@@ -61,6 +65,7 @@ extension LoginViewController: LoginViewDelegate {
     }
 }
 
+// MARK: - add alertUserLoginError
 private extension LoginViewController {
     func alertUserLoginError() {
         let alert = UIAlertController(

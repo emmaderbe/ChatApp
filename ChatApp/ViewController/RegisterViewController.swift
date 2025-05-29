@@ -54,7 +54,7 @@ extension RegisterViewController: RegisterViewDelegate {
     }
     
     func registerButtonError(_ view: RegisterView) {
-        alertUserLoginError()
+        alertUserRegisterError()
     }
     
     func registerButtonAccess(_ view: RegisterView) {
@@ -62,12 +62,12 @@ extension RegisterViewController: RegisterViewDelegate {
     }
 }
 
-// MARK: - add alertUserLoginError
+// MARK: - add alertUserRegisterError
 private extension RegisterViewController {
-    func alertUserLoginError() {
+    func alertUserRegisterError() {
         let alert = UIAlertController(
             title: "Woops",
-            message: "Please enter all information to log in",
+            message: "Please enter all information to register",
             preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
         present(alert, animated: true)
