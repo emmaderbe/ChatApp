@@ -1,8 +1,9 @@
 import UIKit
 
 protocol RegisterViewDelegate: AnyObject {
-    func loginButtonAccess(_ view: RegisterView)
-    func loginButtonError(_ view: RegisterView)
+    func registerButtonAccess(_ view: RegisterView)
+    func registerButtonError(_ view: RegisterView)
+    func imageTapped(_ view: RegisterView)
 }
 
 final class RegisterView: UIView {
@@ -17,7 +18,11 @@ final class RegisterView: UIView {
     
     private let imageView: UIImageView = {
         let image = UIImageView()
-        image.backgroundColor = .darkGray
+        image.image = UIImage(systemName: "person")
+        image.tintColor = .systemGray
+        image.layer.masksToBounds = true
+        image.layer.borderWidth = 2
+        image.layer.borderColor = UIColor.lightGray.cgColor
         image.contentMode = .scaleAspectFit
         return image
     }()
@@ -79,6 +84,15 @@ private extension RegisterView {
         [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach { scrollView.addSubview($0)}
         
         registerBttn.addTarget(self, action: #selector(didTapLogin), for: .touchUpInside)
+        addGestureToImage()
+    }
+    
+    func addGestureToImage() {
+        let gesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(didTapChangeProfilePic))
+        imageView.addGestureRecognizer(gesture)
+        imageView.isUserInteractionEnabled = true
     }
     
     func setupContraints() {
@@ -91,6 +105,7 @@ private extension RegisterView {
             width: imageSize,
             height: imageSize
         )
+        imageView.layer.cornerRadius = imageView.width / 2
         firstNameField.frame = CGRect(
             x: 30,
             y: imageView.frame.maxY + 40,
@@ -136,11 +151,15 @@ private extension RegisterView {
            !password.isEmpty,
            password.count >= 6
         {
-            delegate?.loginButtonAccess(self)
+            delegate?.registerButtonAccess(self)
         }
         else {
-            delegate?.loginButtonError(self)
+            delegate?.registerButtonError(self)
         }
+    }
+    
+    @objc func didTapChangeProfilePic() {
+        delegate?.imageTapped(self)
     }
 }
 
@@ -175,5 +194,11 @@ extension RegisterView {
     }
     
     var scroll: UIScrollView {scrollView}
+}
+
+extension RegisterView {
+    func setupImage(with image: UIImage) {
+        imageView.image = image
+    }
 }
 
