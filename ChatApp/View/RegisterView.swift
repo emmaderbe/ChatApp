@@ -1,9 +1,9 @@
 import UIKit
 
 protocol RegisterViewDelegate: AnyObject {
-    func registerButtonAccess(_ view: RegisterView)
-    func registerButtonError(_ view: RegisterView)
-    func imageTapped(_ view: RegisterView)
+    func registerButtonAccess()
+    func registerButtonError()
+    func imageTapped()
 }
 
 // MARK: - Proporties, init() and layoutSubviews()
@@ -28,22 +28,34 @@ final class RegisterView: UIView {
         return image
     }()
     
-    private let firstNameField = TextFieldFactory.createTextField(
-        with: "First Name...",
-        and: false,
-        and: .continue)
-    private let lastNameField = TextFieldFactory.createTextField(
-        with: "Last Name...",
-        and: false,
-        and: .continue)
-    private let emailField = TextFieldFactory.createTextField(
-        with: "Email Address...",
-        and: false,
-        and: .continue)
-    private let passwordField = TextFieldFactory.createTextField(
-        with: "Password",
-        and: true,
-        and: .done)
+    private let firstNameField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "First Name..."
+        field.returnKeyType = .continue
+        field.isSecureTextEntry = false
+        return field
+    }()
+    private let lastNameField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "Last Name..."
+        field.returnKeyType = .continue
+        field.isSecureTextEntry = false
+        return field
+    }()
+    private let emailField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "Email Address..."
+        field.returnKeyType = .continue
+        field.isSecureTextEntry = false
+        return field
+    }()
+    private let passwordField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "Password"
+        field.returnKeyType = .done
+        field.isSecureTextEntry = true
+        return field
+    }()
     
     private let registerBttn: UIButton = {
         let bttn = UIButton()
@@ -83,10 +95,18 @@ private extension RegisterView {
         backgroundColor = .white
         
         addSubview(scrollView)
-        [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach { scrollView.addSubview($0)}
+        [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach {
+            scrollView.addSubview($0)
+        }
         
-        registerBttn.addTarget(self, action: #selector(didTapRegister), for: .touchUpInside)
+        registerBttn
+            .addTarget(
+                self,
+                action: #selector(didTapRegister),
+                for: .touchUpInside
+            )
         addGestureToImage()
+        observeKeyboard(for: scrollView)
     }
     
     func addGestureToImage() {
@@ -152,56 +172,54 @@ private extension RegisterView {
            !firstName.isEmpty,
            !lastName.isEmpty,
            !email.isEmpty,
-           !password.isEmpty,
            password.count >= 6
         {
-            delegate?.registerButtonAccess(self)
+            delegate?.registerButtonAccess()
         }
         else {
-            delegate?.registerButtonError(self)
+            delegate?.registerButtonError()
         }
     }
     
     @objc func didTapChangeProfilePic() {
-        delegate?.imageTapped(self)
+        delegate?.imageTapped()
     }
 }
 
 // MARK: - add functionality to textField
 extension RegisterView {
-    var emailTextField: UITextField { emailField }
-    var passwordTextField: UITextField { passwordField }
-    var firstNameTextField: UITextField { firstNameField }
-    var lastNameTextField: UITextField { lastNameField }
+    private func getTextFieldsInOrder() -> [UITextField] {
+        [firstNameField, lastNameField, emailField, passwordField]
+    }
     
     func setupTextFieldDelegates(with delegate: UITextFieldDelegate) {
-        firstNameField.delegate = delegate
-        lastNameField.delegate = delegate
-        emailField.delegate = delegate
-        passwordField.delegate = delegate
+        let textFields = getTextFieldsInOrder()
+        textFields.forEach { $0.delegate = delegate
+        }
     }
     
-    func focusLastNameField() {
-        lastNameField.becomeFirstResponder()
+    func focusNextField(after textField: UITextField) {
+        let textFields = getTextFieldsInOrder()
+        
+        guard let index = textFields.firstIndex(of: textField) else {
+            textField.resignFirstResponder()
+            return
+        }
+        
+        if index + 1 < textFields.count {
+            textFields[index + 1].becomeFirstResponder()
+        } else {
+            triggerLoginIfNeeded()
+        }
     }
     
-    func focusEmailField() {
-        emailField.becomeFirstResponder()
-    }
-    
-    func focusPasswordField() {
-        passwordField.becomeFirstResponder()
-    }
-    
-    func triggerLoginIfNeeded() {
+    private func triggerLoginIfNeeded() {
         didTapRegister()
     }
 }
 
-// MARK: - scroll and setupImage
+// MARK: - setupImage
 extension RegisterView {
-    var scroll: UIScrollView {scrollView}
-    
     func setupImage(with image: UIImage) {
         imageView.image = image
     }

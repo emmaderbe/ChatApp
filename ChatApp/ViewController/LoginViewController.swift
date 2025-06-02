@@ -23,8 +23,6 @@ private extension LoginViewController {
                                                             style: .done,
                                                             target: self,
                                                             action: #selector(didTapRegister))
-        
-        observeKeyboard(for: loginView.scroll)
     }
     
     func setupDelegates() {
@@ -45,22 +43,18 @@ private extension LoginViewController {
 // MARK: - UITextFieldDelegate
 extension LoginViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == loginView.emailTextField {
-            loginView.focusPasswordField()
-        } else if textField == loginView.passwordTextField {
-            loginView.triggerLoginIfNeeded()
-        }
+        loginView.focusNextField(after: textField)
         return true
     }
 }
 
 // MARK: - LoginViewDelegate
 extension LoginViewController: LoginViewDelegate {
-    func loginButtonError(_ view: LoginView) {
+    func loginButtonError() {
         alertUserLoginError()
     }
     
-    func loginButtonAccess(_ view: LoginView) {
+    func loginButtonAccess() {
         print("Login tapped!")
     }
 }

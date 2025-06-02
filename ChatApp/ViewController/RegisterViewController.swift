@@ -19,7 +19,6 @@ final class RegisterViewController: UIViewController {
 // MARK: - setupView and Delegates
 private extension RegisterViewController {
     func setupView() {
-        observeKeyboard(for: registerView.scroll)
     }
     
     func setupDelegates() {
@@ -31,33 +30,22 @@ private extension RegisterViewController {
 // MARK: - UITextFieldDelegate
 extension RegisterViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        switch textField {
-        case registerView.firstNameTextField:
-            registerView.focusLastNameField()
-        case registerView.lastNameTextField:
-            registerView.focusEmailField()
-        case registerView.emailTextField:
-            registerView.focusPasswordField()
-        case registerView.passwordTextField:
-            registerView.triggerLoginIfNeeded()
-        default:
-            textField.resignFirstResponder()
-        }
+        registerView.focusNextField(after: textField)
         return true
     }
 }
 
 // MARK: - RegisterViewDelegate
 extension RegisterViewController: RegisterViewDelegate {
-    func imageTapped(_ view: RegisterView) {
+    func imageTapped() {
         presentPhotoActionSheet()
     }
     
-    func registerButtonError(_ view: RegisterView) {
+    func registerButtonError() {
         alertUserRegisterError()
     }
     
-    func registerButtonAccess(_ view: RegisterView) {
+    func registerButtonAccess() {
         print("register tapped!")
     }
 }

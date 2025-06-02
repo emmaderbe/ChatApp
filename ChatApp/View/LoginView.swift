@@ -1,8 +1,8 @@
 import UIKit
 
 protocol LoginViewDelegate: AnyObject {
-    func loginButtonAccess(_ view: LoginView)
-    func loginButtonError(_ view: LoginView)
+    func loginButtonAccess()
+    func loginButtonError()
 }
 
 // MARK: - Proporties, init() and layoutSubviews()
@@ -23,15 +23,22 @@ final class LoginView: UIView {
         return image
     }()
     
-    private let emailField = TextFieldFactory.createTextField(
-        with: "Email Address...",
-        and: false,
-        and: .continue)
-    private let passwordField = TextFieldFactory.createTextField(
-        with: "Password",
-        and: true,
-        and: .done)
+    private let emailField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "Email Address..."
+        field.returnKeyType = .continue
+        field.isSecureTextEntry = false
+        return field
+    }()
     
+    private let passwordField: AuthTextField = {
+        let field = AuthTextField()
+        field.placeholder = "Password"
+        field.returnKeyType = .done
+        field.isSecureTextEntry = true
+        return field
+    }()
+
     private let loginBttn: UIButton = {
         let bttn = UIButton()
         bttn.setTitle("Log In", for: .normal)
@@ -76,6 +83,7 @@ private extension LoginView {
         scrollView.addSubview(loginBttn)
         
         loginBttn.addTarget(self, action: #selector(didTapLogin), for: .touchUpInside)
+        observeKeyboard(for: scrollView)
     }
     
     func setupContraints() {
@@ -117,35 +125,45 @@ private extension LoginView {
         if let email = emailField.text,
            let password = passwordField.text,
            !email.isEmpty,
-           !password.isEmpty,
            password.count >= 6
         {
-            delegate?.loginButtonAccess(self)
+            delegate?.loginButtonAccess()
         }
         else {
-            delegate?.loginButtonError(self)
+            delegate?.loginButtonError()
         }
     }
 }
 
 // MARK: - add functionality to textField
 extension LoginView {
-    var emailTextField: UITextField { emailField }
-    var passwordTextField: UITextField { passwordField }
+    private func getTextFieldsInOrder() -> [UITextField] {
+        [emailField, passwordField]
+    }
     
     func setupTextFieldDelegates(with delegate: UITextFieldDelegate) {
-        emailField.delegate = delegate
-        passwordField.delegate = delegate
+        let textFields = getTextFieldsInOrder()
+        textFields.forEach { $0.delegate = delegate
+        }
     }
     
-    func focusPasswordField() {
-        passwordField.becomeFirstResponder()
+    func focusNextField(after textField: UITextField) {
+        let textFields = getTextFieldsInOrder()
+        
+        guard let index = textFields.firstIndex(of: textField) else {
+            textField.resignFirstResponder()
+            return
+        }
+        
+        if index + 1 < textFields.count {
+            textFields[index + 1].becomeFirstResponder()
+        } else {
+            triggerLoginIfNeeded()
+        }
     }
     
-    func triggerLoginIfNeeded() {
+    private func triggerLoginIfNeeded() {
         didTapLogin()
     }
-    
-    var scroll: UIScrollView {scrollView}
 }
 

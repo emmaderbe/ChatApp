@@ -1,19 +1,21 @@
 import UIKit
 
-final class TextFieldFactory {
-    static func createTextField(with placeholder: String, and isSecure: Bool, and returnKey: UIReturnKeyType) -> UITextField {
-        let field = UITextField()
-        field.autocapitalizationType = .none
-        field.autocorrectionType = .no
-        field.returnKeyType = returnKey
-        field.isSecureTextEntry = isSecure
-        field.layer.cornerRadius = 12
-        field.layer.borderWidth = 1
-        field.layer.borderColor = UIColor.lightGray.cgColor
-        field.placeholder = placeholder
-        field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
-        field.leftViewMode = .always
-        field.backgroundColor = .white
-        return field
+final class AuthTextField: UITextField {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.autocapitalizationType = .none
+        self.autocorrectionType = .no
+        self.layer.cornerRadius = 12
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.placeholder = placeholder
+        self.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: 0))
+        self.leftViewMode = .always
+        self.backgroundColor = .white
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
