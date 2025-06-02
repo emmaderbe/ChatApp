@@ -135,6 +135,13 @@ private extension LoginView {
     }
 }
 
+extension LoginView {
+    func authData() -> [String] {
+        return [emailField.text ?? "",
+                passwordField.text ?? ""]
+    }
+}
+
 // MARK: - add functionality to textField
 extension LoginView {
     private func getTextFieldsInOrder() -> [UITextField] {
@@ -158,12 +165,8 @@ extension LoginView {
         if index + 1 < textFields.count {
             textFields[index + 1].becomeFirstResponder()
         } else {
-            triggerLoginIfNeeded()
+            didTapLogin()
         }
-    }
-    
-    private func triggerLoginIfNeeded() {
-        didTapLogin()
     }
 }
 

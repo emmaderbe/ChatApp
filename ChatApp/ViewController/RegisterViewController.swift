@@ -1,9 +1,21 @@
 import UIKit
+import FirebaseAuth
 
 // MARK: - Proporties and viewDidLoad()
 final class RegisterViewController: UIViewController {
     
     private let registerView = RegisterView()
+    private let viewModel: RegisterViewModelProtocol
+    
+    init(viewModel: RegisterViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         self.view = registerView
@@ -11,17 +23,14 @@ final class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         setupDelegates()
     }
 }
 
 // MARK: - setupView and Delegates
 private extension RegisterViewController {
-    func setupView() {
-    }
-    
     func setupDelegates() {
+        bindViewModel()
         registerView.delegate = self
         registerView.setupTextFieldDelegates(with: self)
     }
@@ -46,7 +55,26 @@ extension RegisterViewController: RegisterViewDelegate {
     }
     
     func registerButtonAccess() {
-        print("register tapped!")
+        auth()
+    }
+}
+
+//MARK: - Auth with Farebase
+private extension RegisterViewController {
+    func bindViewModel() {
+        viewModel.onSuccess = { [weak self] in
+            print("Успешная регистрация")
+        }
+        
+        viewModel.onError = { [weak self] error in
+            print("Ошибка: \(error.localizedDescription)")
+        }
+    }
+    
+    func auth() {
+        let authData = registerView.authData()
+        viewModel.auth(email: authData[0],
+                       password: authData[1])
     }
 }
 
@@ -65,10 +93,10 @@ private extension RegisterViewController {
 // MARK: - add actionSheet
 private extension RegisterViewController {
     func presentPhotoActionSheet() {
-       let actionSheet = UIAlertController(
-        title: "Profile Picture",
-        message: "How would you like to select a picture?",
-        preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: "Profile Picture",
+            message: "How would you like to select a picture?",
+            preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
             title: "Cancel",
@@ -88,7 +116,7 @@ private extension RegisterViewController {
     }
     
     func presentCamera() {
-       let vc = UIImagePickerController()
+        let vc = UIImagePickerController()
         vc.sourceType = .camera
         vc.delegate = self
         vc.allowsEditing = true
@@ -98,9 +126,9 @@ private extension RegisterViewController {
     func presentPhotoPicker() {
         let vc = UIImagePickerController()
         vc.sourceType = .photoLibrary
-         vc.delegate = self
-         vc.allowsEditing = true
-         present(vc, animated: true)
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
     }
 }
 
@@ -116,5 +144,5 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
-}
+    }
 }
