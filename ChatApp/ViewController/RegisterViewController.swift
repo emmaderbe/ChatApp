@@ -51,43 +51,62 @@ extension RegisterViewController: RegisterViewDelegate {
     }
     
     func registerButtonError() {
-        alertUserRegisterError()
+        alertUserInformationError()
     }
     
     func registerButtonAccess() {
-        auth()
+        register()
     }
 }
 
 //MARK: - Auth with Farebase
 private extension RegisterViewController {
     func bindViewModel() {
-        viewModel.onSuccess = { [weak self] in
-            print("Успешная регистрация")
+        viewModel.onSuccessAuth = { [weak self] in
+            guard  let strongSelf = self else {return}
+            strongSelf.navigationController?.dismiss(animated: true)
+            
         }
         
-        viewModel.onError = { [weak self] error in
+        viewModel.onErrorAuth = { [weak self] error in
             print("Ошибка: \(error.localizedDescription)")
+        }
+        
+        viewModel.onErrorUserExist = { [weak self] in
+            self?.alertRegistrationError()
         }
     }
     
-    func auth() {
-        let authData = registerView.authData()
-        viewModel.auth(email: authData[0],
-                       password: authData[1])
+    func register() {
+        let authData = registerView.registerData()
+        
+        guard let email = authData["email"],
+              let password = authData["password"],
+              let firstName = authData["firstName"],
+              let lastName = authData["lastName"]
+        else {return}
+        
+        viewModel.register(email: email,
+                           password: password,
+                           name: firstName,
+                           surname: lastName)
     }
 }
 
-// MARK: - add alertUserRegisterError
+// MARK: - alerts
 private extension RegisterViewController {
-    func alertUserRegisterError() {
-        let alert = UIAlertController(
-            title: "Woops",
-            message: "Please enter all information to register",
-            preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
-        present(alert, animated: true)
+    func alertUserInformationError() {
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                        message: "Please enter all information to register",
+                                        on: self)
     }
+    
+    func alertRegistrationError() {
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                             message: "Looks like a user account for that email address already exist",
+                                             on: self)
+    }
+
 }
 
 // MARK: - add actionSheet

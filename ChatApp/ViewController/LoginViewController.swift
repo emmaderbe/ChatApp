@@ -64,7 +64,7 @@ extension LoginViewController: UITextFieldDelegate {
 // MARK: - LoginViewDelegate
 extension LoginViewController: LoginViewDelegate {
     func loginButtonError() {
-        alertUserLoginError()
+        alertUserInformationError()
     }
     
     func loginButtonAccess() {
@@ -76,10 +76,11 @@ extension LoginViewController: LoginViewDelegate {
 private extension LoginViewController {
     func bindViewModel() {
         viewModel.onSuccess = { [weak self] in
-            print("Успешный log in")
+            guard  let strongSelf = self else {return}
+            strongSelf.navigationController?.dismiss(animated: true)
         }
         viewModel.onError = { [weak self] error in
-            print("Ошибка: \(error.localizedDescription)")
+            self?.alertUserLoginError()
         }
     }
     
@@ -92,12 +93,15 @@ private extension LoginViewController {
 
 // MARK: - add alertUserLoginError
 private extension LoginViewController {
+    func alertUserInformationError() {
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                             message: "Please enter all information to log in",
+                                             on: self)
+    }
+    
     func alertUserLoginError() {
-        let alert = UIAlertController(
-            title: "Woops",
-            message: "Please enter all information to log in",
-            preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
-        present(alert, animated: true)
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                             message: "We can't find this person. Please try again or register",
+                                             on: self)
     }
 }

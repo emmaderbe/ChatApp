@@ -187,9 +187,11 @@ private extension RegisterView {
 }
 
 extension RegisterView {
-    func authData() -> [String] {
-        return [emailField.text ?? "",
-                passwordField.text ?? ""]
+    func registerData() -> [String: String] {
+        return ["email" : emailField.text ?? "",
+                "password" : passwordField.text ?? "",
+                "firstName": firstNameField.text ?? "",
+                "lastName": lastNameField.text ?? ""]
     }
 }
 

@@ -12,7 +12,9 @@ final class LoginViewModel: LoginViewModelProtocol {
     
     var onSuccess: (() -> Void)?
     var onError: ((Error) -> Void)?
-    
+}
+
+extension LoginViewModel {
     func auth(email: String, password: String) {
         Auth.auth().signIn(
             withEmail: email,
