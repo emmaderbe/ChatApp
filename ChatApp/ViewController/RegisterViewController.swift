@@ -1,9 +1,21 @@
 import UIKit
+import FirebaseAuth
 
 // MARK: - Proporties and viewDidLoad()
 final class RegisterViewController: UIViewController {
     
     private let registerView = RegisterView()
+    private let viewModel: RegisterViewModelProtocol
+    
+    init(viewModel: RegisterViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         self.view = registerView
@@ -11,17 +23,14 @@ final class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
         setupDelegates()
     }
 }
 
 // MARK: - setupView and Delegates
 private extension RegisterViewController {
-    func setupView() {
-    }
-    
     func setupDelegates() {
+        bindViewModel()
         registerView.delegate = self
         registerView.setupTextFieldDelegates(with: self)
     }
@@ -42,33 +51,71 @@ extension RegisterViewController: RegisterViewDelegate {
     }
     
     func registerButtonError() {
-        alertUserRegisterError()
+        alertUserInformationError()
     }
     
     func registerButtonAccess() {
-        print("register tapped!")
+        register()
     }
 }
 
-// MARK: - add alertUserRegisterError
+//MARK: - Auth with Farebase
 private extension RegisterViewController {
-    func alertUserRegisterError() {
-        let alert = UIAlertController(
-            title: "Woops",
-            message: "Please enter all information to register",
-            preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel))
-        present(alert, animated: true)
+    func bindViewModel() {
+        viewModel.onSuccessAuth = { [weak self] in
+            guard  let strongSelf = self else {return}
+            strongSelf.navigationController?.dismiss(animated: true)
+            
+        }
+        
+        viewModel.onErrorAuth = { [weak self] error in
+            print("Ошибка: \(error.localizedDescription)")
+        }
+        
+        viewModel.onErrorUserExist = { [weak self] in
+            self?.alertRegistrationError()
+        }
     }
+    
+    func register() {
+        let authData = registerView.registerData()
+        
+        guard let email = authData["email"],
+              let password = authData["password"],
+              let firstName = authData["firstName"],
+              let lastName = authData["lastName"]
+        else {return}
+        
+        viewModel.register(email: email,
+                           password: password,
+                           name: firstName,
+                           surname: lastName)
+    }
+}
+
+// MARK: - alerts
+private extension RegisterViewController {
+    func alertUserInformationError() {
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                        message: "Please enter all information to register",
+                                        on: self)
+    }
+    
+    func alertRegistrationError() {
+        let alert = AuthAlertFactory.present(title: "Woops",
+                                             message: "Looks like a user account for that email address already exist",
+                                             on: self)
+    }
+
 }
 
 // MARK: - add actionSheet
 private extension RegisterViewController {
     func presentPhotoActionSheet() {
-       let actionSheet = UIAlertController(
-        title: "Profile Picture",
-        message: "How would you like to select a picture?",
-        preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: "Profile Picture",
+            message: "How would you like to select a picture?",
+            preferredStyle: .actionSheet)
         
         actionSheet.addAction(UIAlertAction(
             title: "Cancel",
@@ -88,7 +135,7 @@ private extension RegisterViewController {
     }
     
     func presentCamera() {
-       let vc = UIImagePickerController()
+        let vc = UIImagePickerController()
         vc.sourceType = .camera
         vc.delegate = self
         vc.allowsEditing = true
@@ -98,9 +145,9 @@ private extension RegisterViewController {
     func presentPhotoPicker() {
         let vc = UIImagePickerController()
         vc.sourceType = .photoLibrary
-         vc.delegate = self
-         vc.allowsEditing = true
-         present(vc, animated: true)
+        vc.delegate = self
+        vc.allowsEditing = true
+        present(vc, animated: true)
     }
 }
 
@@ -116,5 +163,5 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
-}
+    }
 }

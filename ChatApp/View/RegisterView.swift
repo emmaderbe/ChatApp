@@ -186,6 +186,15 @@ private extension RegisterView {
     }
 }
 
+extension RegisterView {
+    func registerData() -> [String: String] {
+        return ["email" : emailField.text ?? "",
+                "password" : passwordField.text ?? "",
+                "firstName": firstNameField.text ?? "",
+                "lastName": lastNameField.text ?? ""]
+    }
+}
+
 // MARK: - add functionality to textField
 extension RegisterView {
     private func getTextFieldsInOrder() -> [UITextField] {
@@ -209,12 +218,8 @@ extension RegisterView {
         if index + 1 < textFields.count {
             textFields[index + 1].becomeFirstResponder()
         } else {
-            triggerLoginIfNeeded()
+            didTapRegister()
         }
-    }
-    
-    private func triggerLoginIfNeeded() {
-        didTapRegister()
     }
 }
 
