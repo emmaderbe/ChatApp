@@ -19,7 +19,7 @@ final class RegisterView: UIView {
     
     private let imageView: UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(systemName: "person")
+        image.image = UIImage(systemName: "person.circle")
         image.tintColor = .systemGray5
         image.layer.masksToBounds = true
         image.layer.borderWidth = 2
@@ -92,7 +92,7 @@ final class RegisterView: UIView {
 // MARK: - setupView, addGesture  and Contraints
 private extension RegisterView {
     func setupView() {
-        backgroundColor = .white
+        backgroundColor = .clear
         
         addSubview(scrollView)
         [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach {

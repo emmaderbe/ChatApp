@@ -16,3 +16,4 @@ final class AuthAlertFactory {
         viewController.present(alert, animated: true)
     }
 }
+
