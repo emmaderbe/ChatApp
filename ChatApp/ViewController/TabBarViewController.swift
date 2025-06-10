@@ -14,7 +14,7 @@ extension TabBarController {
             generateVC(vc: ConversationsViewController(),
                        image: UIImage(systemName: "message.fill"),
                        title: "Chats"),
-            generateVC(vc: ProfileViewController(),
+            generateVC(vc: ProfileViewController(viewModel: ProfileViewModel()),
                        image: UIImage(systemName: "person.fill"),
                        title: "Profile")
         ]

@@ -94,13 +94,13 @@ private extension LoginViewController {
 // MARK: - add alertUserLoginError
 private extension LoginViewController {
     func alertUserInformationError() {
-        let alert = AuthAlertFactory.present(title: "Woops",
+        let _ = AuthAlertFactory.present(title: "Woops",
                                              message: "Please enter all information to log in",
                                              on: self)
     }
     
     func alertUserLoginError() {
-        let alert = AuthAlertFactory.present(title: "Woops",
+        let _ = AuthAlertFactory.present(title: "Woops",
                                              message: "We can't find this person. Please try again or register",
                                              on: self)
     }
