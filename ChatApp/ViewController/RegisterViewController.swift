@@ -1,9 +1,10 @@
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 // MARK: - Proporties and viewDidLoad()
 final class RegisterViewController: UIViewController {
-    
+    private let spinner = JGProgressHUD(style: .dark)
     private let registerView = RegisterView()
     private let viewModel: RegisterViewModelProtocol
     
@@ -63,16 +64,18 @@ extension RegisterViewController: RegisterViewDelegate {
 private extension RegisterViewController {
     func bindViewModel() {
         viewModel.onSuccessAuth = { [weak self] in
-            guard  let strongSelf = self else {return}
-            strongSelf.navigationController?.dismiss(animated: true)
+            self?.hideLoading()
+            self?.navigationController?.dismiss(animated: true)
             
         }
         
         viewModel.onErrorAuth = { [weak self] error in
+            self?.hideLoading()
             print("Ошибка: \(error.localizedDescription)")
         }
         
         viewModel.onErrorUserExist = { [weak self] in
+            self?.hideLoading()
             self?.alertRegistrationError()
         }
     }
@@ -85,7 +88,7 @@ private extension RegisterViewController {
               let firstName = authData["firstName"],
               let lastName = authData["lastName"]
         else {return}
-        
+        showLoading()
         viewModel.register(email: email,
                            password: password,
                            name: firstName,
@@ -96,13 +99,13 @@ private extension RegisterViewController {
 // MARK: - alerts
 private extension RegisterViewController {
     func alertUserInformationError() {
-        let alert = AuthAlertFactory.present(title: "Woops",
+        let _ = AuthAlertFactory.present(title: "Woops",
                                         message: "Please enter all information to register",
                                         on: self)
     }
     
     func alertRegistrationError() {
-        let alert = AuthAlertFactory.present(title: "Woops",
+        let _ = AuthAlertFactory.present(title: "Woops",
                                              message: "Looks like a user account for that email address already exist",
                                              on: self)
     }
@@ -163,5 +166,20 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
+    }
+}
+
+private extension RegisterViewController {
+    func showLoading() {
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.spinner.show(in: strongSelf.view)
+        }
+    }
+
+    func hideLoading() {
+        DispatchQueue.main.async { [weak self] in
+            self?.spinner.dismiss()
+        }
     }
 }

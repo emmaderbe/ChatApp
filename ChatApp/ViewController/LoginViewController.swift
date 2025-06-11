@@ -1,9 +1,10 @@
 import UIKit
 import FirebaseAuth
+import JGProgressHUD
 
 // MARK: - Proporties and viewDidLoad()
 final class LoginViewController: UIViewController {
-    
+    private let spinner = JGProgressHUD(style: .dark)
     private let loginView = LoginView()
     private let viewModel: LoginViewModelProtocol
     
@@ -76,8 +77,8 @@ extension LoginViewController: LoginViewDelegate {
 private extension LoginViewController {
     func bindViewModel() {
         viewModel.onSuccess = { [weak self] in
-            guard  let strongSelf = self else {return}
-            strongSelf.navigationController?.dismiss(animated: true)
+            self?.hideLoading()
+            self?.navigationController?.dismiss(animated: true)
         }
         viewModel.onError = { [weak self] error in
             self?.alertUserLoginError()
@@ -86,6 +87,7 @@ private extension LoginViewController {
     
     func auth() {
         let authData = loginView.authData()
+        showLoading()
         viewModel.auth(email: authData[0],
                        password: authData[1])
     }
@@ -105,3 +107,19 @@ private extension LoginViewController {
                                              on: self)
     }
 }
+
+private extension LoginViewController {
+    func showLoading() {
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else { return }
+            strongSelf.spinner.show(in: strongSelf.view)
+        }
+    }
+
+    func hideLoading() {
+        DispatchQueue.main.async { [weak self] in
+            self?.spinner.dismiss()
+        }
+    }
+}
+

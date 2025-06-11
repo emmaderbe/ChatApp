@@ -92,7 +92,7 @@ final class RegisterView: UIView {
 // MARK: - setupView, addGesture  and Contraints
 private extension RegisterView {
     func setupView() {
-        backgroundColor = .clear
+        backgroundColor = .white
         
         addSubview(scrollView)
         [imageView, firstNameField, lastNameField, emailField, passwordField, registerBttn].forEach {

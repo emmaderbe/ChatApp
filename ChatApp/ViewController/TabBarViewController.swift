@@ -11,7 +11,7 @@ final class TabBarController: UITabBarController {
 extension TabBarController {
     func generateTabBar() {
         viewControllers = [
-            generateVC(vc: ConversationsViewController(),
+            generateVC(vc: ConversationsViewController(viewModel: ConversationsViewModel()),
                        image: UIImage(systemName: "message.fill"),
                        title: "Chats"),
             generateVC(vc: ProfileViewController(viewModel: ProfileViewModel()),

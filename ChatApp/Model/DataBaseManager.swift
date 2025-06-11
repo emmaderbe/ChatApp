@@ -11,11 +11,7 @@ extension DataBaseManager {
         let safeEmail = email.safeDatabaseKey
         
         database.child(safeEmail).observeSingleEvent(of: .value) { snapshot in
-            if snapshot.exists() {
-                complition(false)
-            } else {
-                complition(true)
-            }
+            complition(snapshot.exists())
         }
     }
 }
