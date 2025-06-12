@@ -4,6 +4,8 @@ import JGProgressHUD
 
 class ConversationsViewController: UIViewController {
     private let conversationsView = ConversationsView()
+    private let dataSource = ConversationTableViewDataSource()
+    private let delegate = ConversationsTableViewDelegate()
     private let viewModel: ConversationsViewModelProtocol
     
     init(viewModel: ConversationsViewModelProtocol) {
@@ -22,18 +24,16 @@ class ConversationsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        setupView()
         viewModel.validateAuth()
     }
 }
 
 private extension ConversationsViewController {
-    func setupDelegates() {
+    func setupView() {
         bindViewModel()
+        setupDataSource()
+        setupDelegate()
     }
     
     func bindViewModel() {
@@ -44,8 +44,36 @@ private extension ConversationsViewController {
             self?.present(nav, animated: false)
         }
         
-        viewModel.onSuccess = {
-            print("Success")
+        viewModel.onSuccess = { [ weak self] in
+            self?.viewModel.loadChats()
         }
+        
+        viewModel.onChatsUpdate = { [weak self] chats in
+            guard let self else { return }
+            dataSource.updateChats(chats)
+            delegate.updateChats(chats)
+            conversationsView.reloadData()
+        }
+    }
+}
+
+private extension ConversationsViewController {
+    func setupDataSource() {
+        dataSource.delegate = self
+        conversationsView.setDataSource(dataSource)
+    }
+    
+    func setupDelegate() {
+        delegate.delegate = self
+        conversationsView.setDelegate(delegate)
+    }
+}
+
+extension ConversationsViewController: ConversationTableViewDataSourceProtocol {
+}
+
+extension ConversationsViewController: ConversationTableViewDelegateProtocol {
+    func didSelectTask(at index: Int) {
+        print("want to select")
     }
 }
