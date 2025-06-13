@@ -65,7 +65,7 @@ private extension RegisterViewController {
     func bindViewModel() {
         viewModel.onSuccessAuth = { [weak self] in
             self?.hideLoading()
-            self?.navigationController?.dismiss(animated: true)
+            self?.viewModel.registerSuccess()
             
         }
         

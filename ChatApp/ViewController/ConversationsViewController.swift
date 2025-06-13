@@ -38,10 +38,7 @@ private extension ConversationsViewController {
     
     func bindViewModel() {
         viewModel.onError = { [weak self] in
-            let vc = LoginViewController(viewModel: LoginViewModel())
-            let nav = UINavigationController(rootViewController: vc)
-            nav.modalPresentationStyle = .fullScreen
-            self?.present(nav, animated: false)
+            self?.viewModel.showLogin()
         }
         
         viewModel.onSuccess = { [ weak self] in

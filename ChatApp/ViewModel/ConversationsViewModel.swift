@@ -8,14 +8,23 @@ protocol ConversationsViewModelProtocol: AnyObject {
     
     func validateAuth()
     func loadChats()
+    func showProfile()
+    func showLogin()
 }
 
 
-final class ConversationsViewModel: ConversationsViewModelProtocol {
+final class ConversationsViewModel: BaseViewModel, ConversationsViewModelProtocol {
     var onSuccess: (() -> Void)?
     var onError: (() -> Void)?
     
     var onChatsUpdate: (([Int]) -> Void)?
+    
+    func showLogin() {
+        router.showLogin()
+    }
+    func showProfile() {
+        router.showProfile()
+    }
 }
 
 extension ConversationsViewModel {

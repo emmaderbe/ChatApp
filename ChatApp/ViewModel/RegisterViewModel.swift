@@ -7,15 +7,15 @@ protocol RegisterViewModelProtocol: AnyObject {
     var onErrorUserExist: (() -> Void)? { get set}
     
     func register(email: String, password: String, name: String, surname: String)
+    
+    func registerSuccess()
 }
 
-final class RegisterViewModel: RegisterViewModelProtocol {
+final class RegisterViewModel: BaseViewModel, RegisterViewModelProtocol {
     var onSuccessAuth: (() -> Void)?
     var onErrorAuth: ((Error) -> Void)?
     var onErrorUserExist: (() -> Void)?
-}
-
-extension RegisterViewModel {
+    
     func register(email: String, password: String, name: String, surname: String) {
         
         DataBaseManager.shared.userExist(with: email,
@@ -41,5 +41,9 @@ extension RegisterViewModel {
             }
             
         })
+    }
+    
+    func registerSuccess() {
+        router.start()
     }
 }

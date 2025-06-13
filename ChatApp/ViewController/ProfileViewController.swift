@@ -33,10 +33,7 @@ private extension ProfileViewController {
     
     func bindViewModel() {
         viewModel.onSuccess = { [weak self] in
-            let vc = LoginViewController(viewModel: LoginViewModel())
-            let nav = UINavigationController(rootViewController: vc)
-            nav.modalPresentationStyle = .fullScreen
-            self?.present(nav, animated: true)
+            self?.viewModel.showLogin()
         }
 
         viewModel.onError = { [weak self] in

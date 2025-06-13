@@ -6,12 +6,22 @@ protocol LoginViewModelProtocol: AnyObject {
     var onError: ((Error) -> Void)? { get set }
     
     func auth(email: String, password: String)
+    func loginSuccess()
+    func showRegister()
 }
 
-final class LoginViewModel: LoginViewModelProtocol {
+final class LoginViewModel: BaseViewModel, LoginViewModelProtocol {
     
     var onSuccess: (() -> Void)?
     var onError: ((Error) -> Void)?
+    
+    func loginSuccess() {
+        router.start()
+    }
+    
+    func showRegister() {
+        router.showRegister()
+    }
 }
 
 extension LoginViewModel {

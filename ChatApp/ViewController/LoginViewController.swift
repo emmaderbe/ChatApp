@@ -48,9 +48,7 @@ private extension LoginViewController {
 // MARK: - func didTapRegister()
 private extension LoginViewController {
     @objc func didTapRegister() {
-        let vc = RegisterViewController(viewModel: RegisterViewModel())
-        vc.title = "Create account"
-        navigationController?.pushViewController(vc, animated: true)
+        viewModel.showRegister()
     }
 }
 
@@ -78,7 +76,7 @@ private extension LoginViewController {
     func bindViewModel() {
         viewModel.onSuccess = { [weak self] in
             self?.hideLoading()
-            self?.navigationController?.dismiss(animated: true)
+            self?.viewModel.loginSuccess()
         }
         viewModel.onError = { [weak self] error in
             self?.alertUserLoginError()

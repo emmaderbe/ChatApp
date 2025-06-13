@@ -1,6 +1,17 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    private let router: RouterProtocol
+    
+    init(router: RouterProtocol) {
+        self.router = router
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         generateTabBar()
@@ -11,10 +22,10 @@ final class TabBarController: UITabBarController {
 extension TabBarController {
     func generateTabBar() {
         viewControllers = [
-            generateVC(vc: ConversationsViewController(viewModel: ConversationsViewModel()),
+            generateVC(vc: ConversationsViewController(viewModel: ConversationsViewModel(router: router)),
                        image: UIImage(systemName: "message.fill"),
                        title: "Chats"),
-            generateVC(vc: ProfileViewController(viewModel: ProfileViewModel()),
+            generateVC(vc: ProfileViewController(viewModel: ProfileViewModel(router: router)),
                        image: UIImage(systemName: "person.fill"),
                        title: "Profile")
         ]
